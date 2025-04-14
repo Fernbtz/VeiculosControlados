@@ -80,9 +80,7 @@
             <th>DNI</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- Registros serán añadidos acá -->
-        </tbody>
+        <tbody></tbody>
       </table>
     </div>
   </div>
@@ -112,7 +110,8 @@
         body: JSON.stringify(datos),
         headers: {
           "Content-Type": "application/json"
-        }
+        },
+        credentials: "include"
       })
       .then(response => response.text())
       .then(result => {
@@ -136,7 +135,7 @@
       });
     });
 
-    // Buscador en la tabla
+    // Buscador
     buscador.addEventListener('input', function () {
       const filtro = buscador.value.toLowerCase();
       const filas = tabla.getElementsByTagName('tr');

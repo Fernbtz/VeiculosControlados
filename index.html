@@ -114,44 +114,66 @@ function enviarDatos() {
 <button onclick="enviarDatos()">Guardar</button>
 
   <script>
-    const form = document.getElementById('registroForm');
-    const tabla = document.querySelector('#tablaRegistros tbody');
-    const buscador = document.getElementById('buscador');
+   <script>
+  const form = document.getElementById('registroForm');
+  const tabla = document.querySelector('#tablaRegistros tbody');
+  const buscador = document.getElementById('buscador');
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
 
-      const datos = {
-        fecha: document.getElementById('fecha').value,
-        hora: document.getElementById('hora').value,
-        lugar: document.getElementById('lugar').value,
-        dominio: document.getElementById('dominio').value,
-        vehiculo: document.getElementById('vehiculo').value,
-        origen: document.getElementById('origen').value,
-        destino: document.getElementById('destino').value,
-        conductor: document.getElementById('conductor').value,
-        dni: document.getElementById('dni').value
-      };
+    const datos = {
+      fecha: document.getElementById('fecha').value,
+      hora: document.getElementById('hora').value,
+      lugar: document.getElementById('lugar').value,
+      dominio: document.getElementById('dominio').value,
+      vehiculo: document.getElementById('vehiculo').value,
+      origen: document.getElementById('origen').value,
+      destino: document.getElementById('destino').value,
+      conductor: document.getElementById('conductor').value,
+      dni: document.getElementById('dni').value
+    };
 
-      const fila = document.createElement('tr');
-      for (let key in datos) {
-        const td = document.createElement('td');
-        td.textContent = datos[key];
-        fila.appendChild(td);
+    // Mostrar en la tabla (local)
+    const fila = document.createElement('tr');
+    for (let key in datos) {
+      const td = document.createElement('td');
+      td.textContent = datos[key];
+      fila.appendChild(td);
+    }
+    tabla.appendChild(fila);
+
+    // Enviar a Google Sheets
+    fetch("https://script.google.com/macros/s/AKfycbxcchCaUN-oODUATOTniyGo4Pib4gcN_1MdiH6tKS2SoW9ZG9kDCe_e5dX5aSmjQcsP/exec", {
+      method: "POST",
+      body: JSON.stringify(datos),
+      headers: {
+        "Content-Type": "application/json"
       }
-      tabla.appendChild(fila);
-      form.reset();
+    })
+    .then(res => res.text())
+    .then(resp => {
+      console.log("Respuesta de Google Sheets:", resp);
+      alert("Registro guardado con éxito.");
+    })
+    .catch(error => {
+      console.error("Error al enviar los datos:", error);
+      alert("Hubo un error al guardar el registro.");
     });
 
-    // Función de búsqueda
-    buscador.addEventListener('input', function () {
-      const filtro = buscador.value.toLowerCase();
-      const filas = tabla.getElementsByTagName('tr');
-      for (let fila of filas) {
-        const textoFila = fila.textContent.toLowerCase();
-        fila.style.display = textoFila.includes(filtro) ? '' : 'none';
-      }
-    });
-  </script>
+    form.reset();
+  });
+
+  // Función de búsqueda
+  buscador.addEventListener('input', function () {
+    const filtro = buscador.value.toLowerCase();
+    const filas = tabla.getElementsByTagName('tr');
+    for (let fila of filas) {
+      const textoFila = fila.textContent.toLowerCase();
+      fila.style.display = textoFila.includes(filtro) ? '' : 'none';
+    }
+  });
+</script>
+
 </body>
 </html>
